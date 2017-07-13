@@ -7,16 +7,15 @@ static const QSettings::Format xmlFormat = QSettings::registerFormat("xml", &rea
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QString xmlFile = "C:/Users/ayesha/QtWorkspace/ayesha3" ;
+    QString xmlFile = "D:/ayesh_work_environment/git_code/Ayesha/pca_xml_code/pca_configuration_xml" ;
     QMap<QString, QVariant> mapdef;
-    int ret1 = createXml(xmlFile, mapdef);
+    /*int ret1 = createXml(xmlFile, mapdef);
     if(ret1)
         qDebug() << "xml File created";
-  /*  Qmap< QString, QVariant> map;
-
-   int ret2 = readXml(xmlFile,  map);
+    QMap< QString, QVariant> map;*/
+   int ret2 = readXml(xmlFile);
     if(ret2)
-        qDebug() << "xml File is read into map Table";*/
+        qDebug() << "xml File is read into map Table";
 
     QString value1 = "write value";
     QString value2 = "read value";
@@ -132,6 +131,15 @@ int createXml(QString &fileName,QMap<QString, QVariant> &mapdef)
 
 }
 
-int readXml(QString &fileName, QMap<QString, QVariant> &map){}
+int readXml(QString &fileName){
+
+    QSettings settings(fileName,xmlFormat,0);
+    //qDebug() <<"read value:" << settings.value("PCA/SENSORS/SENSOR1/NAME");
+     qDebug()<< "read value:" << settings.value("SENSORS/SENSOR1/NAME");
+     qDebug()<< "read FOV:" << settings.value("SENSORS/SENSOR1/CAPABILITIES/FOV/MAX_FOV");
+
+
+
+}
 int writeXmlElement(QString &fileName, QString &element, QString &value){}
 int readXmlElement(QString &fileName,  QString &element, QString &value){}

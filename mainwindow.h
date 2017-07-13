@@ -7,7 +7,7 @@
 #include <QSettings>
 
 int createXml(QString &fileName, QMap<QString, QVariant> &map);
-int readXml(QString &fileName, QHash< QString,QVariant> &hash);
+int readXml(QString &fileName);
 int writeXmlElement(QString &fileName, QString &element, QString &value);
 int readXmlElement(QString &fileName,  QString &element, QString &value);
 bool readSettingsXml(QIODevice &device, QMap<QString, QVariant> &map);
@@ -33,7 +33,7 @@ public:
         QString path = tagName;
 
         while((cur = (const XmlNode *) cur->parent()) != 0)
-            path.prepend(cur->tagName + "//");
+            path.prepend(cur->tagName + "/");
 
         return path.mid(rootName.size() + 1); // remove root node & trailing slash
     }

@@ -6,7 +6,51 @@
 
 bool readSettingsXml(QIODevice &device, QMap<QString, QVariant> &map)
 {
+    QXmlStreamReader xml(&device);
+        XmlNode *curNode = 0;
+      map.clear();
+        while(!xml.atEnd())
+        {
+            switch(xml.readNext())
+            {
+                case QXmlStreamReader::StartElement:
+                    if(curNode != 0)
+                        //we're already processing the file if there already is a current node
+                        curNode = new XmlNode(xml.name().toString(), QString(), curNode);
+                    else if(xml.name().toString() == rootName)
+                        //no current node? this must be the first one: the root
+                        curNode = new XmlNode(rootName);
+                    else
+                        return false; // invalid format: first element *must* be root tag
 
+                    break;
+
+                case QXmlStreamReader::EndElement:
+                    //if current node has no parent, that means we just closed the root tag
+                    //we're done!
+                    if(!curNode->parent())
+                    {
+                        delete curNode;
+                        return true;
+                    }
+
+                    //otherwise, we just closed the current category.
+                    //on the next loop iteration, we should get either the start of the next category or the closing tag of the parent (either the parent category or the "parent" leaf name)
+                    else
+                        curNode = (XmlNode*) QScopedPointer<XmlNode>(curNode)->parent();
+
+                    break;
+
+                case QXmlStreamReader::Characters:
+                    if(!xml.isWhitespace())
+                        map[curNode->fullPath()] = xml.text().toString();
+                    break;
+            }
+        }
+
+        //if it gets here, an error occured.
+        map.clear();
+        return false;
 }
 
 bool writeSettingsXml(QIODevice &device, const QMap<QString, QVariant> &map)
